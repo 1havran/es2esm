@@ -16,18 +16,19 @@ Search Head will perform the gap analysis and forwards the alerts
 that are not received by the upstream platform.
 
 ## Architecture
-+--------------------------------------------------------------------------+
-|                                                           /--> Reciever 1|
-|Splunk Search Head -> Scheduled Search -> "| sendevent cmd" --> Reciever 2|
-|       |                                    /                |            |
-|       |--- eventreplay.py --------------> /                 |            |
-|       |                                                     |            |
-|Splunk Indexer                                           log files        |
-|        \                                                    |            |
-|         \ <-------------------------------------------- Splunk UFs       |
-|                                                                          |
-+--------------------------------------------------------------------------+
 
+	+--------------------------------------------------------------------------+
+	|                                                           /--> Reciever 1|
+	|Splunk Search Head -> Scheduled Search -> "| sendevent cmd" --> Reciever 2|
+	|       |                                    /                |            |
+	|       |--- eventreplay.py --------------> /                 |            |
+	|       |                                                     |            |
+	|Splunk Indexer                                           log files        |
+	|        \                                                    |            |
+	|         \ <-------------------------------------------- Splunk UFs       |
+	|                                                                          |
+	+--------------------------------------------------------------------------+
+	
 ## Design
 1. There is an app called *end2end_app* that should be installed on the 
 Search Head. 
