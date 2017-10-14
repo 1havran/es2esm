@@ -19,9 +19,9 @@ that are not received by the upstream platform.
 
 	+--------------------------------------------------------------------------+
 	|                                                           /--> Reciever 1|
-	|Splunk Search Head -> Scheduled Search -> "| sendevent cmd" --> Reciever 2|
+	|Splunk Search Head -> Scheduled Search ->    sendevent    ----> Reciever 2|
 	|       |                                    /                |            |
-	|       |--- eventreplay.py --------------> /                 |            |
+	|       |--  Missing Events Replay      --> /                 |            |
 	|       |                                                     |            |
 	|Splunk Indexer                                           log files        |
 	|        \                                                    |            |
@@ -38,15 +38,15 @@ invalid searches. Alerts contain sid, unique identifier of the search.
 4. sendevent command will display the events in the GUI and forwards
 the events to multiple destinations sequentially.
 5. Reciever is simple TCP reciever that records the events in three files
-5.1 /tmp/all_logs.log contains all events
-5.2 /tmp/received_logs.log contains all received events
-5.3 /tmp/missed_logs.log contains missed events.
+- /tmp/all\_logs.log contains all events
+- /tmp/received\_logs.log contains all received events
+- /tmp/missed\_logs.log contains missed events.
 6. Reciever is mimicking the delivery hickups. When it receives new event,
 it decides with 25% probability that it will be missed events. Missed event
 is recorded in separate file.
 7. All files are taken by Splunk Universal Forwarder and are indexed by Indexer.
 8. Event replay is performed by the 'eventreplay.py'
-9. It searches through the received_logs.log and compares it with existing
+9. It searches through the received\_logs.log and compares it with existing
 alerts via REST API.
 10. There should be two unique identifier, one from Search Head, one from
 upstream provider.
@@ -61,8 +61,8 @@ executed.
 the receiver on the localhost, Universal Forwarder on the localhost
 - copy splunk configs to the respective folders
 - execute: python reciever.py
-- put end2end_app to the /opt/splunk/etc/apps
-- login to splunk, change context to end2end_app and type invalid search
+- put end2end\_app to the /opt/splunk/etc/apps
+- login to splunk, change context to end2end\_app and type invalid search
 such as ||x ||c
 - replay events manually by python eventreplay.py
 

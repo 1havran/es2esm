@@ -26,13 +26,14 @@
 
 # start splunk
 	${sh/opt/splunk/.bash_profile | grep PYTHONPATH}
+	cp sh/opt/splunk/.bash_profile /opt/splunk
 	/opt/splunkforwarder/bin/splunk start --accept-license
 	/opt/splunk/bin/splunk start --accept-license
 
 # log to splunk
 	chromium http://localhost:8000/en-US/app/end2end_app/search
 
-# ingest random event
+# upstram random event using  "| sendevent"
 	index=_internal | head 2 | table _time, source | sendevent
 	# check on the console where receiver.py is running if the event has been received
 
