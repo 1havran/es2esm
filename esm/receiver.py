@@ -1,6 +1,6 @@
 import SocketServer, random
 
-HOST, PORT = "localhost", 1122
+host, port = "127.0.0.1", 1122
 allLogs = "/tmp/all_logs.log"
 missedLogs = "/tmp/missed_logs.log"
 receivedLogs = "/tmp/received_logs.log"
@@ -8,13 +8,6 @@ randomChoice = "abcd"
 selfPrint = 1
 
 class MyTCPHandler(SocketServer.BaseRequestHandler):
-    """
-    The request handler class for our server.
-
-    It is instantiated once per connection to the server, and must
-    override the handle() method to implement communication to the
-    client.
-    """
 
     def handle(self):
         f_all = open(allLogs, "a+")
@@ -27,7 +20,7 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
             print self.data
 
         f_all.write(self.data + "\n")
-        if random.choice(randomChoice) == "a":
+        if random.choice(randomChoice) == randomChoice[0]:
             f_missed.write(self.data + "\n")
         else:
             f_received.write(self.data + "\n")
@@ -42,9 +35,6 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
 
 if __name__ == "__main__":
 
-    # Create the server, binding to localhost on port 9999
-    server = SocketServer.TCPServer((HOST, PORT), MyTCPHandler)
-
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
+    print "TCP Reciever: Listening on %s:%s" % (host, port)
+    server = SocketServer.TCPServer((host, port), MyTCPHandler)
     server.serve_forever()

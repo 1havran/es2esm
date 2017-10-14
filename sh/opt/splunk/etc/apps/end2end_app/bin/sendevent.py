@@ -16,7 +16,6 @@
 
 import csv, StringIO, sys, urllib, json, socket,os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
 import splunklib.client as client
 try:
     from utils import *
@@ -24,6 +23,13 @@ except ImportError:
     raise Exception("Add the SDK repository to your PYTHONPATH to run the examples "
                     "(e.g., export PYTHONPATH=~/splunk-sdk-python.")
 
+index = "main"
+source = "iface-sh2esm"
+sourcetype = "audit"
+host = "splunk-sh"
+destinations = ["127.0.0.1:1122","127.0.0.1:9991"]
+
+ 
 # Tees output to a logfile for debugging
 class Logger:
     def __init__(self, filename, buf = None):
@@ -151,31 +157,27 @@ def encode_mv(vals):
 
     return s
 
-def send_data(json_data):
+def send_data(data, data_length, dhost, dport):
+    status = "n/a"
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(3)
-        s.connect(("127.0.0.1", 1122))
-        s.send(json_data)
+        s.connect((dhost, int(dport)))
+        s.send(data)
+        status = "ok"
         data = s.recv(1024)
         s.close()
-        return "ok"
     except socket.error, ex:
-        return ex
+        status = ex
+    finally:
+        status_msg = "type=\"summary\" host=\"%s\" port=\"%s\" connection_status=\"%s\" notable_event_count=%s\n" % (dhost, dport, status, data_length)
+        return status_msg
 
 def index_data(message):
-    index = "main"
-    source = "iface-es2esm"
-    sourcetype = "e2e"
-    host = "splunk-es"
-
     opts = parse(None, None, ".splunkrc", usage=None)
-
     kwargs_splunk = dslice(opts.kwargs, FLAGS_SPLUNK)
     service = client.connect(**kwargs_splunk)
     service.indexes[index].submit(message, host, source, sourcetype)
-
-
 
 def main(argv):
     stdin_wrapper = Reader(sys.stdin)
@@ -187,13 +189,11 @@ def main(argv):
 
     output_results(data)
     json_data = json.dumps(data)
-    f = open("/tmp/file.json","a+")
-    status_code = send_data(json_data)
-    status_msg = "type=\"summary\" connection_status=\"%s\" notable_event_count=%s\n" % (status_code, len(data))
-    f.write(status_msg)
-    f.close()
-    #index audit trail
-    index_data(status_msg)
+
+    for d in destinations:
+        dhost, dport = d.split(":")
+        status_msg = send_data(json_data, len(data), dhost, int(dport))
+        index_data(status_msg)
 
 if __name__ == "__main__":
     try: 
