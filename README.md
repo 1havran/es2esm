@@ -16,14 +16,17 @@ Search Head will perform the gap analysis and forwards the alerts
 that are not received by the upstream platform.
 
 ## Architecture
-                                                           /--> Reciever 1
-Splunk Search Head -> Scheduled Search -> "| sendevent cmd" --> Reciever 2
-       |                                    /                |
-       |--- eventreplay.py --------------> /                 |
-       |                                                     |
-Splunk Indexer                                           log files
-        \                                                    |
-         \ <-------------------------------------------- Splunk UFs
++--------------------------------------------------------------------------+
+|                                                           /--> Reciever 1|
+|Splunk Search Head -> Scheduled Search -> "| sendevent cmd" --> Reciever 2|
+|       |                                    /                |            |
+|       |--- eventreplay.py --------------> /                 |            |
+|       |                                                     |            |
+|Splunk Indexer                                           log files        |
+|        \                                                    |            |
+|         \ <-------------------------------------------- Splunk UFs       |
+|                                                                          |
++--------------------------------------------------------------------------+
 
 ## Design
 1. There is an app called *end2end_app* that should be installed on the 
@@ -60,6 +63,7 @@ the receiver on the localhost, Universal Forwarder on the localhost
 - put end2end_app to the /opt/splunk/etc/apps
 - login to splunk, change context to end2end_app and type invalid search
 such as ||x ||c
+- replay events manually by python eventreplay.py
 
 
 ## Known issues
