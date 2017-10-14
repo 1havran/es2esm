@@ -10,7 +10,7 @@ verbose = 0
 sids = []
 gapSearch = "| rest /servicesNS/admin/end2end_app/alerts/fired_alerts/Invalid%20Search%20Alert | fields sid | rex field=sid \"(?<info_sid>^.*)$\" | fields info_sid | dedup info_sid | append [ search index=main source=\"esm_event_report_success\" | table info_sid | dedup info_sid] | stats count by info_sid | search count<2"
 jobSearch = "/services/search/jobs/%s/results"
-splunkCredentials = "admin:asdfasdf"
+splunkCredentials = "admin:changeme"
 
 def runSearch(params):
     old_stdout = sys.stdout
