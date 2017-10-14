@@ -1,16 +1,16 @@
 # Proof-of-Concept - Splunk SH Alert Upstream Interface with end to end delivery assurance
-The goal of the POC is to demonstrate end-to-end delivery of the
+The goal of the POC is to demonstrate the end-to-end delivery of the
 alerts generated on the Splunk Search Head towards upstream
 platform.
 
 The alerts are scheduled on the Search Head as scheduled searches.
 Once the alert is generated, it is forwarded to the Upstream platform.
 Realtime searches are not supported during the POC. Also, alerts
-must be configured to generate one line of the results.
+must be configured to generate one liner of the results.
 
 Upstream platform will generate a report of received alerts and
 will send the report back to the Splunk Indexers using Universal
-Forwarders.
+Forwarder.
 
 Search Head will perform the gap analysis and forwards the alerts
 that are not received by the upstream platform.
