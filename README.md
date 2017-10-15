@@ -32,8 +32,8 @@ that are not received by the upstream platform.
 ## Design
 1. There is an app called *end2end_app* that should be installed on the 
 Search Head. 
-2. There is scheduled search each minute that generates the alert on
-invalid searches. Alerts contain sid, unique identifier of the search.
+2. There is scheduled search executed each minute that generates the alert on
+invalid searches. Alerts contain sid - unique identifier of the search.
 3. Alerts are piped to "| sendevent" command.
 4. sendevent command will display the events in the GUI and forwards
 the events to multiple destinations sequentially.
@@ -54,9 +54,10 @@ upstream provider.
 executed.
 12. Alerts contain all data and it is not needed to reschedule search again.
 13. The data is received over REST API and replayed towards the Receiver.
-14. Since Receiver may choose to accept it or missed it (see 6.)
+14. Receiver may choose to accept it or missed it (see 6.)
 
-## Installation
+## Howto
+- see also INSTALL.md
 - simplified setup: run splunk in standalone mode in localhost,
 the receiver on the localhost, Universal Forwarder on the localhost
 - copy splunk configs to the respective folders
@@ -64,7 +65,14 @@ the receiver on the localhost, Universal Forwarder on the localhost
 - put end2end\_app to the /opt/splunk/etc/apps
 - login to splunk, change context to end2end\_app and type invalid search
 such as ||x ||c
-- replay events manually by python eventreplay.py
+- there are four sources in Splunk:
+1. source=iface-sh2esm
+2. source=esm\_event\_report\_all
+3. source=esm\_event\_report\_success
+4. source=esm\_event\_report\_failed
+- sent events are audited in source=iface-sh2esm
+- if events are not captured in success log, they can be replayed
+- to replay events, manually execute python eventreplay.py
 
 
 ## Known issues
