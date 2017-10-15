@@ -53,8 +53,7 @@
 	||g
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/03.errorsearch.png)
 
-	# The alert will be triggered in a minute in the Splunk GUI -> Activity 
--> Triggered Alerts
+	# The alert will be triggered in a minute in the Splunk GUI -> Activity -> Triggered Alerts
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/04.alert.png)
 
 	# Click on the alert to see the results
@@ -63,7 +62,7 @@
 # search for all events received by the Reciever
 	index=main source="esm_event_report_success" | table info_sid | dedup info_sid
 	
-	# Same events will be in the log file.
+	# Same events will be in the log files.
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/06.alert_received.png)
 
 	# You may notice, missed events are recorded in separate log file.
@@ -84,15 +83,13 @@
 	# receiver will display the events on the stdout
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/12.eventreplay-receiver.png)
 
-	# sometimes events must be replayed multiple times as receiver moves events to 
-missed with 25% probability.
+	# sometimes events must be replayed multiple times as receiver moves events to missed with 25% probability.
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/13.eventreplay3.png)
 
-	# this event was replayed 4 times. 3 times it was missed, last time it was considered
-as received.
+	# this particular event was replayed by eventreplay.py 4 times. 3 times it was missed, last time it was considered as received.
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/14.eventreplay3-receiver.png)
 
-	# eventreplay.py and sendevent produces the audittrail as separate source in Splunk.
+	# eventreplay.py and sendevent.py produces the audittrail as separate source in Splunk.
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/15.splunk-summary.png)
 
 # to schedule event replay
