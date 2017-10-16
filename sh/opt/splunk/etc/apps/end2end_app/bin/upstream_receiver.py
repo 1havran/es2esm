@@ -30,12 +30,15 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
         self.request.sendall(self.data.upper())
 
 def main(argv):
+    up = u.Upstream()
+    dest = up.getDestinations(-1)
+    print "TCP Receiver:",
     if len(argv) < 2:
-	receiver = 1
+	receiver = 0
+	print "No numeric argument, using argv:1, configuration:" + str(dest)
     else:
         receiver = argv[1]
-    up = u.Upstream()
-    i = int(receiver) % len(up.getDestinations(-1))
+    i = int(receiver) % len(dest)
     (tag, host, port) = up.getDestinations(i).split(":") 
 
     allLogs = "/tmp/%s_all_logs.log" % (tag)
