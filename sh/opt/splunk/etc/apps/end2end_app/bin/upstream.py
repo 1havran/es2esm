@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import socket
-import submit
+import upstream_submit
 
 _destinations = ["emea:127.0.0.1:19997","apac:127.0.0.1:19998"]
 _index = "main"
@@ -24,7 +24,7 @@ class Upstream:
 		status = "n/a"
 		try:
 			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			#s.settimeout(self._get_timeout)
+			#s.settimeout(self._get_timeout) float error
 			s.settimeout(0.1)
 			s.connect((dhost, int(dport)))
 			s.send(data)
