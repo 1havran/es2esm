@@ -45,8 +45,7 @@ class Upstream:
 		for d in destinations:
 			tag, dhost, dport = d.split(":")			
 			status_msg = self._send_data(data, length, dhost, dport, tag)
-			submit.main(["--sourcetype=" + self.sourcetype, '--eventhost=' + tag, '--eventsource=' + self.source, self.index, status_msg])
-
+                        submit.main(status_msg, tag, self.source, self.sourcetype, self.index)
 
 
 	def getDestinations(self, i):
