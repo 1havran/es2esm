@@ -45,7 +45,7 @@ def main(argv):
     missedLogs = "/tmp/%s_missed_logs.log" % (tag)
     receivedLogs = "/tmp/%s_received_logs.log" % (tag)
 
-    print "TCP Reciever: Listening on %s:%s:%s" % (tag, host, int(port))
+    print "TCP Receiver: Listening on %s:%s:%s" % (tag, host, int(port))
     server = SocketServer.TCPServer((host, int(port)), MyTCPHandler)
     server.serve_forever()
 

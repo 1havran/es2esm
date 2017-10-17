@@ -10,15 +10,14 @@ def main(argv):
     up = u.Upstream()
 
     data = []
+    routing_region = ""
     for row in csv.DictReader(buf):
-	routing_id = row['count']
+	routing_region = row['region']
         data.append(row)
 
     spl.output_results(data)
 
-    #get dest index based on the cound
-    i = routing_id % len(up.getDestinations(-1))
-    dest = up.getDestinations(i)
+    dest = up.getDestinations(up.getRouting(routing_region))
     up.sendData(json.dumps(data), len(data), dest)
 
 if __name__ == "__main__":

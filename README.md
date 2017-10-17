@@ -17,31 +17,31 @@ that are not received by the upstream platform.
 
 ## Architecture
 
-	+--------------------------------------------------------------------------+
-	|                                                           /--> Reciever 1|
-	|Splunk Search Head -> Scheduled Search ->    sendevent    ----> Reciever 2|
-	|       |                                    /                |            |
-	|       |--  Missing Events Replay      --> /                 |            |
-	|       |                                                     |            |
-	|Splunk Indexer                                           log files        |
-	|        \                                                    |            |
-	|         \ <-------------------------------------------- Splunk UFs       |
-	|                                                                          |
-	+--------------------------------------------------------------------------+
+	+-------------------------------------------------------------------------------+
+	|                                                                 /--> Receiver 1|
+	|Splunk Search Head -> Scheduled Search ->  upstream_sendevent   ----> Receiver 2|
+	|       |                                    /                      |            |
+	|       |--  Missing Events Replay      --> /                       |            |
+	|       |                                                           |            |
+	|Splunk Indexer                                                 log files        |
+	|        \                                                          |            |
+	|         \ <--------------------------------------------       Splunk UFs       |
+	|                                                                                |
+	+--------------------------------------------------------------------------------+
 	
 ## Design
 1. There is an app called *end2end_app* that should be installed on the 
 Search Head. 
 2. There is scheduled search executed each minute that generates the alert on
 invalid searches. Alerts contain sid - unique identifier of the search.
-3. Alerts are piped to "| sendevent" command.
-4. sendevent command will display the events in the GUI and forwards
+3. Alerts are piped to "| upstream\_sendevent" command.
+4. upstream\_sendevent command will display the events in the GUI and forwards
 the events to multiple destinations sequentially.
-5. Reciever is simple TCP reciever that records the events in three files
+5. Receiver is simple TCP receiver that records the events in three files
 - /tmp/all\_logs.log contains all events
 - /tmp/received\_logs.log contains all received events
 - /tmp/missed\_logs.log contains missed events.
-6. Reciever is mimicking the delivery hickups. When it receives new event,
+6. Receiver is mimicking the delivery hickups. When it receives new event,
 it decides with 25% probability that it will be missed events. Missed event
 is recorded in separate file.
 7. All files are taken by Splunk Universal Forwarder and are indexed by Indexer.
@@ -61,7 +61,7 @@ executed.
 - simplified setup: run splunk in standalone mode in localhost,
 the receiver on the localhost, Universal Forwarder on the localhost
 - copy splunk configs to the respective folders
-- execute: python reciever.py
+- execute: python upstream\_receiver.py
 - put end2end\_app to the /opt/splunk/etc/apps
 - login to splunk, change context to end2end\_app and type invalid search
 such as ||x ||c
