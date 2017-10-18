@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import socket
-import upstream_submit
+import upstream_submit as up_s
 
 _destinations = ["emea:127.0.0.1:19997","apac:127.0.0.1:19998"]
 _index = "main"
@@ -38,14 +38,14 @@ class Upstream:
         		import traceback
 		        traceback.print_exc(file=sys.stdout)
 		finally:
-        		status_msg = "type=\"summary\" tag=\"%s\" host=\"%s\" port=\"%s\" connection_status=\"%s\" notable_event_count=%s\n" % (dhost, dport, status, data_length, tag)
+        		status_msg = "type=\"summary\" tag=\"%s\" host=\"%s\" port=\"%s\" connection_status=\"%s\" notable_event_count=%s\n" % (tag, dhost, dport, status, data_length)
         		return status_msg
 
 	def sendData(self, data, length, destinations):
 		for d in destinations:
 			tag, dhost, dport = d.split(":")			
 			status_msg = self._send_data(data, length, dhost, dport, tag)
-                        submit.main(status_msg, tag, self.source, self.sourcetype, self.index)
+                        up_s.main(status_msg, tag, self.source, self.sourcetype, self.index)
 
 
 	def getDestinations(self, i):

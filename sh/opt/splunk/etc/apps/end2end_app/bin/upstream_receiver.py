@@ -4,6 +4,9 @@ import sys
 
 randomChoice = "abcd"
 selfPrint = 1
+allLogs = "/tmp/shared_all_logs.log"
+missedLogs = "/tmp/shared_missed_logs.log"
+receivedLogs = "/tmp/shared_received_logs.log"
 
 class MyTCPHandler(SocketServer.BaseRequestHandler):
     def handle(self):
@@ -35,15 +38,11 @@ def main(argv):
     print "TCP Receiver:",
     if len(argv) < 2:
 	receiver = 0
-	print "No numeric argument, using argv:1, configuration:" + str(dest)
+	print "No numeric argument, using argv:" + str(receiver) +", configuration:" + str(dest)
     else:
         receiver = argv[1]
     i = int(receiver) % len(dest)
-    (tag, host, port) = up.getDestinations(i).split(":") 
-
-    allLogs = "/tmp/%s_all_logs.log" % (tag)
-    missedLogs = "/tmp/%s_missed_logs.log" % (tag)
-    receivedLogs = "/tmp/%s_received_logs.log" % (tag)
+    (tag, host, port) = up.getDestinations(i)[0].split(":") 
 
     print "TCP Receiver: Listening on %s:%s:%s" % (tag, host, int(port))
     server = SocketServer.TCPServer((host, int(port)), MyTCPHandler)

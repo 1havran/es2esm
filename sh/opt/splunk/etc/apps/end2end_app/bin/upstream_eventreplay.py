@@ -11,7 +11,7 @@ sids = []
 alertName = "Failed%20Splunk%20Login"
 gapSearch = "| rest /servicesNS/admin/end2end_app/alerts/fired_alerts/%s | fields sid | rex field=sid \"(?<info_sid>^.*)$\" | fields info_sid | dedup info_sid | append [ search index=main source=\"esm_event_report_success\" | table info_sid | dedup info_sid] | stats count by info_sid | search count<2" % (alertName)
 jobSearch = "/services/search/jobs/%s/results"
-splunkCredentials = "admin:changeme"
+splunkCredentials = "admin:asdfasdf"
 
 def runSearch(params):
     old_stdout = sys.stdout
@@ -39,7 +39,6 @@ def main():
 
     for sid in sids:
         print sid
-        continue
         results = getSearchResults(sid)
         if results:
             results = json.loads(results)
@@ -47,10 +46,11 @@ def main():
                 for result in results['results']:
                     if verbose: 
                         print result
+                    dest = up.getDestinations(up.getRouting(result['region']))
                     json_data = json.dumps(result)
-                    dest = u.getDestinations(u.getRouting(json['region']))
-                    u.sendData(json_data, len(result), dest)
-            except:
+                    up.sendData(json_data, len(result), dest)
+            except Exception as ex:
+                print ex
                 pass
 
 if __name__ == "__main__":

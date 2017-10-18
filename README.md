@@ -17,36 +17,38 @@ that are not received by the upstream platform.
 
 ## Architecture
 
-	+--------------------------------------------------------------------------------+
-	|                                              /-Routing-\        /--> Receiver 1|
-	|Splunk Search Head -> Scheduled Search ->  upstream_sendevent   ----> Receiver 2|
-	|       |                                    /                      |            |
-	|       |--  Missing Events Replay      --> /                       |            |
-	|       |                                                           |            |
-	|Splunk Indexer                                                 log files        |
-	|        \                                                          |            |
-	|         \ <--------------------------------------------       Splunk UFs       |
-	|                                                                                |
-	+--------------------------------------------------------------------------------+
+	+---------------------------------------------------------------------------------+
+        |                                                                                 |
+	|                                             Routing decision                    |
+	|                                                    |             /--> Receiver 1|
+	|Splunk Search Head --> Scheduled Search --> Upstream Sendevent -->         |     |
+	|       |                                    /                     \--> Receiver n|
+	|       |--> Missing Events Replay      --> /                               |     |
+	|       |                                                                   |     |
+	|Splunk Indexer                                                         log files |
+	|        \                                                                  |     |
+	|         \ <--         <--        <--        <--         <-- Splunk UFs <--/     |
+	|                                                                                 |
+	+---------------------------------------------------------------------------------+
 	
 ## Design
 1. There is an app called *end2end_app* that should be installed on the 
 Search Head. 
-2. There is scheduled search executed each minute that generates the alert on failed splunk logins. Alerts contain sid - unique identifier of the search.
-3. Alerts are piped to "| upstream\_sendevent" command.
-4. upstream\_sendevent command will display the events in the GUI and forwards the events to multiple destinations sequentially based on the 'region' flag in the alert.
-5. Receiver is simple TCP receiver that records the events in three files
-- /tmp/all\_logs.log contains all events
-- /tmp/received\_logs.log contains all received events
-- /tmp/missed\_logs.log contains missed events.
+2. There is scheduled search executed each minute that generates the Alert on Failed Splunk Logins. Alerts contain the sid - unique identifier of the search.
+3. Alerts are piped to "| upstream" command.
+4. upstream command will display the events in the GUI and forwards the events to multiple destinations sequentially based on the 'region' flag in the alert.
+5. Receiver is simple TCP receiver that records the events in three files:
+- /tmp/shared\_all\_logs.log contains all events
+- /tmp/shared\_received\_logs.log contains all received events
+- /tmp/shared\_missed\_logs.log contains missed events.
 6. Receiver is mimicking the delivery hickups. When it receives new event, it decides with 25% probability that it will be missed events. Missed event is recorded in separate file.
-7. All files are taken by Splunk Universal Forwarder and are indexed by Indexer.
+7. All files are taken by Splunk Universal Forwarder and are indexed by Splunk Indexer.
 8. Event replay is performed by the 'upstream\_eventreplay.py'
 9. It searches through the received\_logs.log and compares it with existing alerts via REST API.
 10. There should be two unique identifier, one from Search Head, one from upstream provider.
-11. If there is no identifier from the upstream provider, then replay is executed.
+11. If there is no identifier from the upstream provider, then the eventreplay is executed.
 12. Alerts contain all data and it is not needed to reschedule search again.
-13. The data is received over REST API and replayed towards the Receiver.
+13. The alert data is received over REST API and replayed towards the Receiver.
 14. Receiver may choose to accept it or missed it (see 6.)
 
 ## Howto

@@ -1,1 +1,2 @@
-* */1 * * * python /opt/splunk/etc/apps/end2end_app/bin/eventreplay.py
+# replay events once per day
+* */1 * * * export PYTHONPATH=/opt/splunk/splunk-sdk/python && python /opt/splunk/etc/apps/end2end_app/bin/upstream_eventreplay.py
