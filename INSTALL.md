@@ -27,7 +27,7 @@
 	export PYTHONPATH=/opt/splunk/splunk-sdk-python
 
 # start receiver in separate console
-	python esm/upstream_receiver.py
+	python sh/opt/splunk/etc/apps/end2end_app/upstream_receiver.py
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/receiver.png)
 
 # start splunk
@@ -42,7 +42,6 @@
 
 # upstream random event using  "| upstream"
 	index=_audit user=admin action="login attempt" info=succeeded | stats count by user,action | eval region="emea" | upstream
-	# check on the console where receiver.py is running if the event has been received
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/upstream_sendevent.png)
 	
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/sendevent_receiver.png)
