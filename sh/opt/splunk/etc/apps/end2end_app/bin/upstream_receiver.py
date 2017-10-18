@@ -1,14 +1,14 @@
 import SocketServer, random
+import upstream as u
+import sys
 
-host, port = "127.0.0.1", 1122
-allLogs = "/tmp/all_logs.log"
-missedLogs = "/tmp/missed_logs.log"
-receivedLogs = "/tmp/received_logs.log"
 randomChoice = "abcd"
 selfPrint = 1
+allLogs = "/tmp/shared_all_logs.log"
+missedLogs = "/tmp/shared_missed_logs.log"
+receivedLogs = "/tmp/shared_received_logs.log"
 
 class MyTCPHandler(SocketServer.BaseRequestHandler):
-
     def handle(self):
         f_all = open(allLogs, "a+")
         f_missed = open(missedLogs, "a+")
@@ -32,9 +32,27 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
         # just send back the same data, but upper-cased
         self.request.sendall(self.data.upper())
 
+def main(argv):
+    up = u.Upstream()
+    dest = up.getDestinations(-1)
+    print "TCP Receiver:",
+    if len(argv) < 2:
+	receiver = 0
+	print "No numeric argument, using argv:" + str(receiver) +", configuration:" + str(dest)
+    else:
+        receiver = argv[1]
+    i = int(receiver) % len(dest)
+    (tag, host, port) = up.getDestinations(i)[0].split(":") 
+
+    print "TCP Receiver: Listening on %s:%s:%s" % (tag, host, int(port))
+    server = SocketServer.TCPServer((host, int(port)), MyTCPHandler)
+    server.serve_forever()
+
 
 if __name__ == "__main__":
+    try:
+        main(sys.argv)
+    except Exception:
+        import traceback
+        traceback.print_exc(file=sys.stdout)
 
-    print "TCP Reciever: Listening on %s:%s" % (host, port)
-    server = SocketServer.TCPServer((host, port), MyTCPHandler)
-    server.serve_forever()

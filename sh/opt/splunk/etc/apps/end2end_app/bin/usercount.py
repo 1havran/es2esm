@@ -14,22 +14,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import csv, StringIO, sys, urllib, json, socket,os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-import splunklib.client as client
-try:
-    from utils import *
-except ImportError:
-    raise Exception("Add the SDK repository to your PYTHONPATH to run the examples "
-                    "(e.g., export PYTHONPATH=~/splunk-sdk-python.")
+import csv, StringIO, sys, urllib
 
-index = "main"
-source = "iface-sh2esm"
-sourcetype = "audit"
-host = "splunk-sh"
-destinations = ["127.0.0.1:1122","127.0.0.1:9991"]
-
- 
 # Tees output to a logfile for debugging
 class Logger:
     def __init__(self, filename, buf = None):
@@ -98,6 +84,7 @@ def output_results(results, mvdelim = '\n', output = sys.stdout):
     # convert the fields into a list and create a CSV writer
     # to output to stdout
     fields = sorted(list(fields))
+
     writer = csv.DictWriter(output, fields)
 
     # Write out the fields, and then the actual results
@@ -157,43 +144,38 @@ def encode_mv(vals):
 
     return s
 
-def send_data(data, data_length, dhost, dport):
-    status = "n/a"
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(3)
-        s.connect((dhost, int(dport)))
-        s.send(data)
-        status = "ok"
-        data = s.recv(1024)
-        s.close()
-    except socket.error, ex:
-        status = ex
-    finally:
-        status_msg = "type=\"summary\" host=\"%s\" port=\"%s\" connection_status=\"%s\" notable_event_count=%s\n" % (dhost, dport, status, data_length)
-        return status_msg
-
-def index_data(message):
-    opts = parse(None, None, ".splunkrc", usage=None)
-    kwargs_splunk = dslice(opts.kwargs, FLAGS_SPLUNK)
-    service = client.connect(**kwargs_splunk)
-    service.indexes[index].submit(message, host, source, sourcetype)
-
 def main(argv):
     stdin_wrapper = Reader(sys.stdin)
     buf, settings = read_input(stdin_wrapper, has_header = True)
+    events = csv.DictReader(buf)
+    
+    results = []
 
-    data = []
-    for row in csv.DictReader(buf):
-        data.append(row)
+    for event in events:
+        # For each event, we read in the raw event data
+        raw = StringIO.StringIO(event["_raw"])
+        top_output = csv.DictReader(raw, delimiter = ' ', skipinitialspace = True)
+    
+        # And then, for each row of the output of the 'top' command
+        # (where each row represents a single process), we look at the
+        # owning user of that process.
+        usercounts = {}
+        for row in top_output:
+            user = row["USER"]
+            user = user if not user.startswith('_') else user[1:]
+    
+            usercount = 0
+            if usercounts.has_key(user):
+                usercount = usercounts[user]
+    
+            usercount += 1
+            usercounts[user] = usercount
+    
+        results.append(usercounts)
+    
+    # And output it to the next stage of the pipeline
+    output_results(results)
 
-    output_results(data)
-    json_data = json.dumps(data)
-
-    for d in destinations:
-        dhost, dport = d.split(":")
-        status_msg = send_data(json_data, len(data), dhost, int(dport))
-        index_data(status_msg)
 
 if __name__ == "__main__":
     try: 
