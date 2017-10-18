@@ -18,7 +18,7 @@ that are not received by the upstream platform.
 ## Architecture
 
 	+---------------------------------------------------------------------------------+
-        |                                                                                 |
+	|                                                                                 |
 	|                                             Routing decision                    |
 	|                                                    |             /--> Receiver 1|
 	|Splunk Search Head --> Scheduled Search --> Upstream Sendevent -->         |     |

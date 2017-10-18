@@ -76,7 +76,8 @@
 	# receiver will display the events on the stdout
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/apacreceiverok.png)
 
-	# sometimes events must be replayed multiple times as receiver moves events to missed with 25% probability.
+	# sometimes events must be replayed multiple times as the receiver marks events as missed events with 25% probability.
+Event can be replayed multiple times. If they are already received, they are not replayed again.
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/eventreplay2.png)
 
 # to schedule event replay
