@@ -52,15 +52,14 @@
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/failedlogin.png)
 
 # check alerts
-	# The alert will be triggered in a minute in the Splunk GUI -> Activity -> Triggered Alerts
+The alert will be triggered in a minute in the Splunk GUI -> Activity -> Triggered Alerts
 	log to splunk, wait a minute
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/alert.png)
 
-	# Click on the alert to see the results
+Click on the alert to see the results
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/alertdetail.png)
 
-	# Examine the region of the event
-	Event might be "emea" or "apac". The region is randomly selected by the alert logic. If it is "apac", then it has not been received by the Receiver as we started EMEA Receiver only. See first screenshot.
+Examine the region of the event. Event might be "emea" or "apac". The region is randomly selected by the alert logic. If it is "apac", then it has not been received by the Receiver as we started EMEA Receiver only. See first screenshot.
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/apacregion.png)
 
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/apacreceiverdown.png)
@@ -73,11 +72,10 @@
 	python upstream_eventreplay.py
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/upstream_eventreplay.png)
 
-	# receiver will display the events on the stdout
+receiver will display the events on the stdout
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/apacreceiverok.png)
 
-	# sometimes events must be replayed multiple times as the receiver marks events as missed events with 25% probability.
-Event can be replayed multiple times. If they are already received, they are not replayed again.
+Sometimes events must be replayed multiple times as the receiver marks events as missed events with 25% probability. Event can be replayed multiple times. If they are already received, they are not replayed again.
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/eventreplay2.png)
 
 # to schedule event replay
