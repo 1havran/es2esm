@@ -43,7 +43,8 @@
 # upstream random event using  "| upstream"
 	index=_audit user=admin action="login attempt" info=succeeded | stats count by user,action | eval region="emea" | upstream
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/upstream_sendevent.png)
-	
+
+Upstream is executed each the splunk search is executed. The empty data below \[\] represents a heartbeat.
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/sendevent_receiver.png)
 
 # ingest failed login events manually
