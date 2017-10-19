@@ -44,7 +44,7 @@
 	index=_audit user=admin action="login attempt" info=succeeded | stats count by user,action | eval region="emea" | upstream
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/upstream_sendevent.png)
 
-Upstream is executed each the splunk search is executed. The empty data below \[\] represents a heartbeat.
+Each time the splunk search with "| upstream" is executed, it will upstream the data. It will also upstream empty data if there are no results. This is actually the implementation of the heartbeat for scheduled searches. Empty data is represented by \[\].
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/sendevent_receiver.png)
 
 # ingest failed login events manually
