@@ -35,7 +35,7 @@ that are not received by the upstream platform.
 1. There is an app called *end2end_app* that should be installed on the 
 Search Head. 
 2. There is scheduled search executed each minute that generates the Alert on Failed Splunk Logins. Alerts contain the sid - unique identifier of the search.
-3. Alerts are piped to "| upstream" command.
+3. Alerts are piped to "|upstream\_addmeta(usecase) | upstream" command.
 4. upstream command will display the events in the GUI and forwards the events to multiple destinations sequentially based on the 'region' flag in the alert.
 5. Receiver is simple TCP receiver that records the events in three files:
 - /tmp/shared\_all\_logs.log contains all events
@@ -45,9 +45,9 @@ Search Head.
 7. All files are taken by Splunk Universal Forwarder and are indexed by Splunk Indexer.
 8. Event replay is performed by the 'upstream\_eventreplay.py'
 9. It searches through the received\_logs.log and compares it with existing alerts via REST API.
-10. There should be two unique identifier, one from Search Head, one from upstream provider.
-11. If there is no identifier from the upstream provider, then the eventreplay is executed.
-12. Alerts contain all data and it is not needed to reschedule search again.
+10. It compares existing results in each Alert against received logs.
+11. If there is no match from the upstream provider (received logs), then the eventreplay is executed to replay missing event.
+12. Alerts contain all data and it is not needed to reschedule the search again.
 13. The alert data is received over REST API and replayed towards the Receiver.
 14. Receiver may choose to accept it or missed it (see 6.)
 
@@ -73,6 +73,5 @@ Search Head.
 
 ## Known issues
 - Realtime searches are not supported since the sid is not generated in the same way as scheduled search
-- Multiple results in the alert are not supported. The POC would need to be extended by partial alert replay.
 
 
