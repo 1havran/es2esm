@@ -60,7 +60,7 @@ The alert will be triggered in a minute in the Splunk GUI -> Activity -> Trigger
 Click on the alert to see the results
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/alertdetail.png)
 
-Examine the region of the event. Event might be "emea" or "apac". The region is randomly selected by the alert logic. If it is "apac", then it has not been received by the Receiver as we started EMEA Receiver only. See first screenshot.
+Examine the region of your alert. Each result is assigned a region. It might be "emea" or "apac". The region is randomly selected by the "upstream\_addmeta" command. If it is "apac", then it has not been received by the Receiver as we started EMEA Receiver only. See first screenshot.
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/apacregion.png)
 
 ![](https://github.com/1havran/es2esm/blob/master/screenshots/apacreceiverdown.png)
@@ -81,3 +81,4 @@ Sometimes events must be replayed multiple times as the receiver marks events as
 
 # to schedule event replay
 	cp es2esm/sh/etc/crontab /etc/cron.d/upstream_eventreplay
+
